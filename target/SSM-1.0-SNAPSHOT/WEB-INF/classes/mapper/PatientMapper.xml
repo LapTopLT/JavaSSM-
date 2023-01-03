@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?> <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.PatientMapper">
+    <sql id="all">
+        pid,uid,pname,psex,page,pnumber,pallergic
+    </sql>
+
+<!--    Patient queryPatient(String uid);-->
+    <select id="queryPatient" resultType="patient">
+        select <include refid="all"></include>
+        from patient where uid = #{uid}
+    </select>
+
+<!--    int insertPatient(Patient p)-->
+    <insert id="insertPatient" parameterType="patient">
+        insert into patient values(#{pid},#{uid},#{pname},#{psex},#{page},#{pnumber},#{pallergic})
+    </insert>
+
+    <!--int updatePatient(Patient p)-->
+    <update id="updatePatient" parameterType="patient">
+        update patient set pname = #{pname},psex = #{psex},page = #{page},pnumber = #{pnumber},pallergic = #{pallergic}
+        where pid = #{pid}
+    </update>
+
+<!--    regist-->
+    <insert id="regist" parameterType="registration">
+        insert into registration values(#{regid},#{pid},#{did},#{regtime},#{regstate},#{regdesc})
+    </insert>
+
+<!--    queryReg-->
+    <select id="queryReg" resultType="registration">
+        select regid,pid,did,regtime,regstate,regdesc
+        from registration
+        <where>
+            pid = #{pid}
+            <if test="single">
+                and regstate != 0
+            </if>
+            <if test="!single">
+                and regstate == 0
+            </if>
+        </where>
+
+    </select>
+
+<!--    queryByPid-->
+    <select id="queryByPid" resultType="patient">
+        select pid,uid,pname,psex,page,pnumber,pallergic
+        from patient where pid = #{pid}
+    </select>
+
+<!--    getPreListByPid-->
+    <select id="getPreListByPid" resultType="prescription">
+        select * from prescription where pid = #{pid}
+    </select>
+
+<!-- changePrestate-->
+    <update id="changePrestate">
+        update prescription set prestate = #{prestate}
+        where preid = #{preid}
+    </update>
+
+<!--    checkMedlist-->
+    <select id="checkMedlist" resultType="pharmacy">
+        select * from pharmacy where preid = #{preid}
+    </select>
+
+<!--    getPidByPname-->
+    <select id="getPidByPname" resultType="int">
+        select pid from patient where pname = #{pname}
+    </select>
+
+<!--    queryDocList-->
+    <select id="queryDocList" resultType="docDuty">
+        select * from doc_duty
+        where deptno = #{deptno} and dutyday = #{dutyday}
+    </select>
+
+<!--    registSuccess-->
+    <update id="registSuccess">
+        update duty set dutyamount = dutyamount - 1
+        where did = #{did} and dutyday = #{dutyday} and dutytime = #{dutytime}
+    </update>
+
+<!--    cancelReg-->
+    <delete id="cancelReg">
+        delete from registration
+        where pid = #{pid} and regstate = 1
+    </delete>
+</mapper>

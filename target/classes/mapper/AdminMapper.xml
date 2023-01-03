@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8" ?> <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.AdminMapper">
+
+<!--    getMeds-->
+    <select id="getMeds" resultType="medicine">
+        select * from medicine
+        <where>
+            <if test="medname != null and medname != ''">
+                and medname like concat('%',#{medname},'%')
+            </if>
+            <if test="medid != null and medid != ''">
+                and medid = #{medid}
+            </if>
+        </where>
+        limit #{start},5
+    </select>
+
+<!--    getMedRowCount-->
+    <select id="getMedRowCount" resultType="int">
+        select count(*) from medicine
+        <where>
+            <if test="medname != null and medname != ''">
+                and medname like concat('%',#{medname},'%')
+            </if>
+            <if test="medid != null and medid != ''">
+                and medid = #{medid}
+            </if>
+        </where>
+    </select>
+
+<!--    pharmacyQueryPre -->
+    <select id="pharmacyQueryPre" resultType="prescribe">
+        select * from prescribe
+        <where>
+            prestate = 2
+            <if test="preid != '' and preid != null">
+                and preid like concat('%',#{preid},'%')
+            </if>
+            <if test="pname != '' and pname != null">
+                and pname like concat('%',#{pname},'%')
+            </if>
+        </where>
+        limit #{start},5
+    </select>
+
+<!--    getDeliverMedList-->
+    <select id="getDeliverMedList" resultType="pharmacyMed">
+        select * from pharmacy_med
+        where preid = #{preid}
+    </select>
+
+<!--    medOut-->
+    <update id="medOut">
+        update
+            pharmacy_med
+        set
+            medamount = medamount - amount
+        where prestate = 2 and preid = #{preid}
+    </update>
+    <update id="changePrestate">
+        update
+            prescription
+        set
+            prestate = #{prestate}
+        where prestate = 2 and preid = #{preid}
+    </update>
+
+<!--    getAllDept-->
+    <select id="getAllDept" resultType="dept">
+        select * from department
+        <where>
+            <if test="deptid != '' and deptid != null">
+                and deptno = #{deptid}
+            </if>
+            <if test="deptname != '' and deptname != null">
+                and deptname like concat('%',#{deptname},'%')
+            </if>
+        </where>
+        limit #{start},5
+    </select>
+
+<!--    getDeptRowCount-->
+    <select id="getDeptRowCount" resultType="int">
+        select count(*) from department
+        <where>
+            <if test="deptno != '' and deptno != null">
+                and deptno = #{deptno}
+            </if>
+            <if test="deptname != '' and deptname != null">
+                and deptname like concat('%',#{deptname},'%')
+            </if>
+        </where>
+    </select>
+
+<!--    insertDept-->
+    <insert id="insertDept">
+        insert into department values(#{deptno},#{deptname})
+    </insert>
+
+<!--    updateDept-->
+    <update id="updateDept">
+        update department set deptname = #{deptname}
+where deptno = #{deptno}
+    </update>
+
+<!--    deleteDept-->
+    <delete id="deleteDept">
+        delete from department where deptno = #{deptno}
+    </delete>
+
+<!--    getAllDoc-->
+    <select id="getAllDoc" resultType="doctor">
+        select * from doc_dept
+        <where>
+            <if test="did != '' and did != null">
+                and did like concat(#{did},'%')
+            </if>
+            <if test="dname != '' and dname != null">
+                and dname like concat('%',#{dname},'%')
+            </if>
+        </where>
+        limit #{start},5
+    </select>
+
+<!--    getDocRowCount-->
+    <select id="getDocRowCount" resultType="int">
+        select count(*) from doctor
+        <where>
+            <if test="dname != null and dname != null">
+                and dname like concat('%',#{dname},'%')
+            </if>
+            <if test="did != null and did != ''">
+                and did = #{did}
+            </if>
+        </where>
+    </select>
+
+<!--    deleteDoc-->
+    <delete id="deleteDoc">
+        delete from doctor where did = #{did}
+    </delete>
+
+<!--    getAllPatient-->
+    <select id="getAllPatient" resultType="patient">
+        select * from patient
+        <where>
+            <if test="pid != '' and pid != null">
+                and pid like concat(#{pid},'%')
+            </if>
+            <if test="pname != '' and pname != null">
+                and pname like concat('%',#{pname},'%')
+            </if>
+        </where>
+        limit #{start},5
+    </select>
+
+<!--    getPatientRowCount-->
+    <select id="getPatientRowCount" resultType="int">
+        select count(*) from patient
+        <where>
+            <if test="pid != null and pid != ''">
+                and pid like concat(#{pid},'%')
+            </if>
+            <if test="pname != null and pname != ''">
+                and pname like concat('%',#{pname},'%')
+            </if>
+        </where>
+    </select>
+
+<!--    deletePatientByPid-->
+    <delete id="deletePatientByPid">
+        delete from patient where pid = #{pid}
+    </delete>
+
+<!--    updatePatient-->
+    <update id="updatePatient" parameterType="patient">
+        update patient set pname = #{pname},psex = #{psex},page = #{page},pnumber = #{pnumber},pallergic = #{pallergic}
+        where pid = #{pid}
+    </update>
+
+<!--    queryUser-->
+    <select id="queryUser" resultType="user">
+        select * from user
+        <where>
+            <if test="uid != '' and uid != null">
+                and uid like concat(#{uid},'%')
+            </if>
+            <if test="uname != '' and uname != null">
+                and uname like concat('%',#{uname},'%')
+            </if>
+        </where>
+        limit #{start},5
+    </select>
+
+<!--    getUserRowCount-->
+    <select id="getUserRowCount" resultType="int">
+        select count(*) from user
+        <where>
+            <if test="uid != '' and uid != null">
+                and uid like concat(#{uid},'%')
+            </if>
+            <if test="uname != '' and uname != null">
+                and uname like concat('%',#{uname},'%')
+            </if>
+        </where>
+    </select>
+
+<!--    getRegList-->
+    <select id="getRegList" resultType="registration">
+        select * from registration
+        <where>
+            <if test="regid != '' and regid != null">
+                and regid like concat(#{regid},'%')
+            </if>
+        </where>
+        limit #{start},5
+    </select>
+
+<!--    getRegRowCount-->
+    <select id="getRegRowCount" resultType="int">
+        select count(*) from registration
+        <where>
+            <if test="regid != '' and regid != null">
+                and regid like concat(#{regid},'%')
+            </if>
+        </where>
+    </select>
+
+<!--    updateUser-->
+    <update id="updateUser" parameterType="user">
+        update user set uname = #{uname},upassword = #{upassword},uemail = #{email},roleid = #{roleid}
+    </update>
+
+<!--    deleteUser-->
+    <delete id="deleteUser">
+        delete from user where uid = #{uid}
+    </delete>
+
+<!--    updateReg-->
+    <update id="updateReg" parameterType="registration">
+        update registration set pid = #{pid},did = #{did},regtime = #{regtime},regstate = #{regstate}
+    </update>
+
+<!--    updateMed-->
+    <update id="updateMed" parameterType="medicine">
+        update medicine
+        set medname = #{medname},medamount = #{medamount},medprice = #{medprice}
+        where medid = #{medid}
+    </update>
+
+<!--    deleteMed-->
+    <delete id="deleteMed">
+        delete from medicine where medid = #{medid}
+    </delete>
+
+<!--    insertMed-->
+    <insert id="insertMed" parameterType="medicine">
+        insert into medicine
+        values(#{medid},#{medname},#{medamount},#{medprice})
+    </insert>
+
+<!--    getAllPre-->
+    <select id="getAllPre" resultType="prescription">
+        select * from prescription
+        <where>
+            <if test="preid != null and preid != ''">
+                and preid like concat(#{preid},'%')
+            </if>
+        </where>
+        limit #{start},5
+    </select>
+
+<!--    getPreRowCount-->
+    <select id="getPreRowCount" resultType="int">
+        select count(*) from prescription
+        <where>
+            <if test="preid != null and preid != ''">
+                and preid like concat(#{preid},'%')
+            </if>
+        </where>
+    </select>
+
+<!--    updatePre-->
+    <update id="updatePre" parameterType="prescription">
+        update prescription set
+        pid = #{pid},did = #{did},predesc = #{predesc},prestate = #{prestate},predate = #{predate},totalPrice = #{totalPrice}
+        where preid = #{preid}
+    </update>
+
+<!--    deletePre-->
+    <delete id="deletePre">
+        delete from prescription where preid = #{preid}
+    </delete>
+</mapper>

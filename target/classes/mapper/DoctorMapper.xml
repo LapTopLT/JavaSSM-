@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?> <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.DoctorMapper">
+<!--    Doctor queryDoctor(String uid);-->
+    <select id="queryDoctor" resultType="doctor">
+        select * from doc_dept where uid = #{uid}
+    </select>
+
+<!--    insertDoctor-->
+    <insert id="insertDoctor" parameterType="doctor">
+        insert into doctor
+        values(#{uid},#{did},#{dname},#{dsex},#{dage},#{dnumber},#{deptno})
+    </insert>
+
+<!--    updateDoctor-->
+    <update id="updateDoctor" parameterType="doctor">
+        update doctor set dname = #{dname},dsex = #{dsex},dage = #{dage},dnumber = #{dnumber}
+        where did = #{did}
+    </update>
+
+<!--    queryDepts-->
+    <select id="queryDepts" resultType="dept">
+        select deptno,deptname from department
+    </select>
+
+<!--    queryByDeptno-->
+    <select id="queryByDeptno" resultType="doctor">
+        select * from doc_dept where deptno = #{deptno}
+    </select>
+
+<!--    queryByDid-->
+    <select id="queryByDid" resultType="doctor">
+        select did,dname,dsex,dage,dnumber,deptname
+        from doc_dept where did = #{did}
+    </select>
+
+<!--    queryRegList-->
+    <select id="queryRegList" resultType="registration">
+        select regid,pid,did,regtime,regstate,regdesc
+from registration
+        <where>
+            regstate != 0
+            <if test="did != '' and did != null">
+               and did = #{did}
+            </if>
+        </where>
+        order by regtime asc limit #{start},#{size}
+    </select>
+
+<!--    getRegRowCount-->
+    <select id="getRegRowCount" resultType="int" >
+        select count(*) from registration
+        <where>
+            <if test="did != '' and did != null">
+                did = #{did}
+            </if>
+            and regstate != 0
+        </where>
+    </select>
+
+<!--    changeRegstate-->
+    <update id="changeRegstate">
+        update registration set regstate = #{regstate} where regid = #{regid}
+    </update>
+
+<!--    queryMedPage-->
+    <select id="queryMedPage" resultType="medicine">
+        select medid,medname,medamount,medprice
+        from medicine
+        <where>
+            <if test="medname != '' and medname != null">
+                medname like concat('%',#{medname},'%')
+            </if>
+        </where>
+        limit #{start},#{size}
+    </select>
+
+<!--    getMedRowCount-->
+    <select id="getMedRowCount" resultType="int">
+        select count(*) from medicine
+        <where>
+            <if test="medname != '' and medname != null">
+                and medname like concat('%',#{medname},'%')
+            </if>
+        </where>
+    </select>
+
+<!--    getPreListByDid-->
+    <select id="getPreListByDid" resultType="prescription">
+        select * from prescription where did = #{did}
+        limit #{start},5
+    </select>
+
+<!--    getPreRowCountByDid-->
+    <select id="getPreRowCountByDid">
+        select count(*) from prescription where did = #{did}
+    </select>
+
+<!--    queryDutyByDid-->
+    <select id="queryDutyByDid" resultType="duty">
+        select * from duty where did = #{did}
+    </select>
+
+<!--    insertDutyList-->
+    <insert id="insertDutyList">
+    insert into duty
+    values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.did},#{item.dutyday},#{item.dutytime},#{item.dutyamount},#{item.dutycharge})
+        </foreach>
+    </insert>
+
+<!--    deleteDutyByDid-->
+    <delete id="deleteDutyByDid">
+        delete from duty where did = #{did}
+    </delete>
+</mapper>

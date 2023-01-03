@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?> <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.PrescriptionMapper">
+<!--addPre-->
+    <insert id="addPre">
+        insert into prescription
+        values(#{regid},#{preid},#{pid},#{did},#{predesc},#{prestate},#{predate},#{totalPrice})
+    </insert>
+
+<!--    addPharmacy-->
+    <insert id="addPharmacy">
+        insert into pharmacy
+        values
+        <foreach collection="meds" item="med" separator=",">
+            (#{preid},#{med.medid},#{med.medname},#{med.medamount})
+        </foreach>
+    </insert>
+
+<!--    changeRegstate-->
+    <update id="changeRegstate">
+        update registration set regstate = #{regstate} where regid = #{regid}
+    </update>
+</mapper>
